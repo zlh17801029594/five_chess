@@ -20,6 +20,11 @@ public class ChessBoard extends JPanel {
         for (int i = 0; i <= COLS; i++) {
             g.drawLine(MARGIN + i*GRID_SPAN, MARGIN, MARGIN + i*GRID_SPAN, MARGIN + ROWS*GRID_SPAN);
         }
+
+        Chess c1 = new Chess(this, 2, 3, Color.BLACK);
+        c1.draw(g);
+        Chess c2 = new Chess(this, 5, 2, Color.WHITE);
+        c2.draw(g);
     }
 
     @Override

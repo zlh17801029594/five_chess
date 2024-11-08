@@ -25,6 +25,11 @@ public class ChessBoard extends JPanel {
     }
 
     @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(MARGIN*2 + GRID_SPAN*COLS, MARGIN*2 + GRID_SPAN*ROWS);
+    }
+
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -48,11 +53,6 @@ public class ChessBoard extends JPanel {
                 g.drawRect(xPos - DIAMETER / 2, yPos - DIAMETER / 2, DIAMETER, DIAMETER);
             }
         }
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(MARGIN*2 + GRID_SPAN*COLS, MARGIN*2 + GRID_SPAN*ROWS);
     }
 
     public boolean hasChess(int col, int row) {
@@ -164,7 +164,7 @@ public class ChessBoard extends JPanel {
             if (hasChess(col, row)) {
                 return;
             }
-            Chess c = new Chess(ChessBoard.this, col, row, isBlack ? Color.BLACK : Color.WHITE);
+            Chess c = new Chess(col, row, isBlack ? Color.BLACK : Color.WHITE);
             chessList[chessCount++] = c;
             repaint();
             if (isWin(col, row)) {

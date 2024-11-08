@@ -8,13 +8,11 @@ import static com.zhoulihuang.ChessBoard.MARGIN;
 
 public class Chess {
     public static final int DIAMETER = GRID_SPAN - 2;
-    ChessBoard cb;
     private int col;
     private int row;
     private Color color;
 
-    public Chess(ChessBoard cb, int col, int row, Color color) {
-        this.cb = cb;
+    public Chess(int col, int row, Color color) {
         this.col = col;
         this.row = row;
         this.color = color;

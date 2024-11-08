@@ -20,6 +20,14 @@ public class Chess {
         this.color = color;
     }
 
+    public int getCol() {
+        return col;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
     public void draw(Graphics g) {
         int xPos = col * GRID_SPAN + MARGIN;
         int yPos = row * GRID_SPAN + MARGIN;

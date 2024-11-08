@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 import static com.zhoulihuang.Chess.DIAMETER;
 
@@ -20,6 +21,7 @@ public class ChessBoard extends JPanel {
 
     public ChessBoard() {
         this.addMouseListener(new MouseMonitor());
+        this.addMouseMotionListener(new MouseMotionMonitor());
     }
 
     @Override
@@ -77,7 +79,7 @@ public class ChessBoard extends JPanel {
             if (++num == 5)
                 return true;
         }
-        for (int i = col + 1; i < COLS; i++) {
+        for (int i = col + 1; i <= COLS; i++) {
             if (!hasChess(i, row, isBlack ? Color.BLACK : Color.WHITE))
                 break;
             if (++num == 5)
@@ -91,7 +93,7 @@ public class ChessBoard extends JPanel {
             if (++num == 5)
                 return true;
         }
-        for (int i = row + 1; i < ROWS; i++) {
+        for (int i = row + 1; i <= ROWS; i++) {
             if (!hasChess(col, i, isBlack ? Color.BLACK : Color.WHITE))
                 break;
             if (++num == 5)
@@ -105,7 +107,7 @@ public class ChessBoard extends JPanel {
             if (++num == 5)
                 return true;
         }
-        for (int i = col + 1, j = row + 1; i < COLS && j < ROWS; i++, j++) {
+        for (int i = col + 1, j = row + 1; i <= COLS && j <= ROWS; i++, j++) {
             if (!hasChess(i, j, isBlack ? Color.BLACK : Color.WHITE))
                 break;
             if (++num == 5)
@@ -113,13 +115,13 @@ public class ChessBoard extends JPanel {
         }
 
         num = 1;
-        for (int i = col - 1, j = row + 1; i >= 0 && j < ROWS; i--, j++) {
+        for (int i = col - 1, j = row + 1; i >= 0 && j <= ROWS; i--, j++) {
             if (!hasChess(i, j, isBlack ? Color.BLACK : Color.WHITE))
                 break;
             if (++num == 5)
                 return true;
         }
-        for (int i = col + 1, j = row - 1; i < COLS && j >= 0; i++, j--) {
+        for (int i = col + 1, j = row - 1; i <= COLS && j >= 0; i++, j--) {
             if (!hasChess(i, j, isBlack ? Color.BLACK : Color.WHITE))
                 break;
             if (++num == 5)
@@ -136,17 +138,33 @@ public class ChessBoard extends JPanel {
             }
             int col = (e.getX() - MARGIN + GRID_SPAN / 2) / GRID_SPAN;
             int row = (e.getY() - MARGIN + GRID_SPAN / 2) / GRID_SPAN;
+            if (col < 0 || col > COLS || row < 0 || row > ROWS) {
+                return;
+            }
             if (hasChess(col, row)) {
                 return;
             }
-            if (isWin(col, row)) {
-                isGamming = false;
-            }
             Chess c = new Chess(ChessBoard.this, col, row, isBlack ? Color.BLACK : Color.WHITE);
-            isBlack = !isBlack;
             chessList[chessCount++] = c;
             repaint();
+            if (isWin(col, row)) {
+                isGamming = false;
+                JOptionPane.showMessageDialog(ChessBoard.this, String.format("恭喜，%s赢了！", isBlack ? "黑棋" : "白棋"));
+            }
+            isBlack = !isBlack;
         }
     }
 
+    class MouseMotionMonitor extends MouseMotionAdapter {
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            int xPos = (e.getX() + GRID_SPAN / 2 - MARGIN) / GRID_SPAN;
+            int yPos = (e.getY() + GRID_SPAN / 2 - MARGIN) / GRID_SPAN;
+            if (isGamming && xPos >= 0 && xPos <= COLS && yPos >= 0 && yPos <= ROWS && !hasChess(xPos, yPos)) {
+                ChessBoard.this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            } else {
+                ChessBoard.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        }
+    }
 }

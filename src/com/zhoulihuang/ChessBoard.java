@@ -72,62 +72,82 @@ public class ChessBoard extends JPanel {
     }
 
     public boolean isWin(int col, int row) {
-        int num = 1;
+        int continueCount = 1;
         for (int i = col - 1; i >= 0; i--) {
             if (!hasChess(i, row, isBlack ? Color.BLACK : Color.WHITE))
                 break;
-            if (++num == 5)
+            if (++continueCount == 5)
                 return true;
         }
         for (int i = col + 1; i <= COLS; i++) {
             if (!hasChess(i, row, isBlack ? Color.BLACK : Color.WHITE))
                 break;
-            if (++num == 5)
+            if (++continueCount == 5)
                 return true;
         }
 
-        num = 1;
+        continueCount = 1;
         for (int i = row - 1; i >= 0; i--) {
             if (!hasChess(col, i, isBlack ? Color.BLACK : Color.WHITE))
                 break;
-            if (++num == 5)
+            if (++continueCount == 5)
                 return true;
         }
         for (int i = row + 1; i <= ROWS; i++) {
             if (!hasChess(col, i, isBlack ? Color.BLACK : Color.WHITE))
                 break;
-            if (++num == 5)
+            if (++continueCount == 5)
                 return true;
         }
 
-        num = 1;
+        continueCount = 1;
         for (int i = col - 1, j = row - 1; i >= 0 && j >= 0; i--, j--) {
             if (!hasChess(i, j, isBlack ? Color.BLACK : Color.WHITE))
                 break;
-            if (++num == 5)
+            if (++continueCount == 5)
                 return true;
         }
         for (int i = col + 1, j = row + 1; i <= COLS && j <= ROWS; i++, j++) {
             if (!hasChess(i, j, isBlack ? Color.BLACK : Color.WHITE))
                 break;
-            if (++num == 5)
+            if (++continueCount == 5)
                 return true;
         }
 
-        num = 1;
+        continueCount = 1;
         for (int i = col - 1, j = row + 1; i >= 0 && j <= ROWS; i--, j++) {
             if (!hasChess(i, j, isBlack ? Color.BLACK : Color.WHITE))
                 break;
-            if (++num == 5)
+            if (++continueCount == 5)
                 return true;
         }
         for (int i = col + 1, j = row - 1; i <= COLS && j >= 0; i++, j--) {
             if (!hasChess(i, j, isBlack ? Color.BLACK : Color.WHITE))
                 break;
-            if (++num == 5)
+            if (++continueCount == 5)
                 return true;
         }
         return false;
+    }
+
+    public void restartGame() {
+        isGamming = true;
+        for (int i = 0; i < chessCount; i++) {
+            chessList[i] = null;
+        }
+        chessCount = 0;
+        isBlack = true;
+        repaint();
+    }
+
+    public void goback() {
+        if (chessCount == 0) {
+            return;
+        }
+        chessList[chessCount - 1] = null;
+        chessCount--;
+        isBlack = !isBlack;
+        repaint();
     }
 
     class MouseMonitor extends MouseAdapter {

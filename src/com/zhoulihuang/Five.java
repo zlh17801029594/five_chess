@@ -2,6 +2,8 @@ package com.zhoulihuang;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Five extends JFrame {
     private JToolBar toolBar;
@@ -14,6 +16,10 @@ public class Five extends JFrame {
         startButton = new JButton("重新开始");
         backButton = new JButton("悔棋");
         exitButton = new JButton("退出");
+        ActionMonitor actionMonitor = new ActionMonitor();
+        startButton.addActionListener(actionMonitor);
+        backButton.addActionListener(actionMonitor);
+        exitButton.addActionListener(actionMonitor);
         aggregateToolBar(toolBar, startButton, backButton, exitButton);
         boardPanel = new ChessBoard();
         aggregateFive(this, toolBar, boardPanel);
@@ -38,4 +44,18 @@ public class Five extends JFrame {
         toolBar.add(backButton);
         toolBar.add(exitButton);
     }
+
+    class ActionMonitor implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == startButton) {
+                boardPanel.restartGame();
+            } else if (e.getSource() == backButton) {
+                boardPanel.goback();
+            } else if (e.getSource() == exitButton) {
+                System.exit(0);
+            }
+        }
+    }
+
 }

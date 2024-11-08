@@ -28,6 +28,10 @@ public class Chess {
         return row;
     }
 
+    public Color getColor() {
+        return color;
+    }
+
     public void draw(Graphics g) {
         int xPos = col * GRID_SPAN + MARGIN;
         int yPos = row * GRID_SPAN + MARGIN;

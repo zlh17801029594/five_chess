@@ -16,6 +16,7 @@ public class ChessBoard extends JPanel {
     Chess[] chessList = new Chess[(ROWS + 1) * (COLS + 1)];
     int chessCount;
     boolean isBlack = true;
+    boolean isGamming = true;
 
     public ChessBoard() {
         this.addMouseListener(new MouseMonitor());
@@ -60,13 +61,86 @@ public class ChessBoard extends JPanel {
         return false;
     }
 
+    public boolean hasChess(int col, int row, Color color) {
+        for (int i = 0; i < chessCount; i++) {
+            if (chessList[i].getCol() == col && chessList[i].getRow() == row && chessList[i].getColor() == color)
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isWin(int col, int row) {
+        int num = 1;
+        for (int i = col - 1; i >= 0; i--) {
+            if (!hasChess(i, row, isBlack ? Color.BLACK : Color.WHITE))
+                break;
+            if (++num == 5)
+                return true;
+        }
+        for (int i = col + 1; i < COLS; i++) {
+            if (!hasChess(i, row, isBlack ? Color.BLACK : Color.WHITE))
+                break;
+            if (++num == 5)
+                return true;
+        }
+
+        num = 1;
+        for (int i = row - 1; i >= 0; i--) {
+            if (!hasChess(col, i, isBlack ? Color.BLACK : Color.WHITE))
+                break;
+            if (++num == 5)
+                return true;
+        }
+        for (int i = row + 1; i < ROWS; i++) {
+            if (!hasChess(col, i, isBlack ? Color.BLACK : Color.WHITE))
+                break;
+            if (++num == 5)
+                return true;
+        }
+
+        num = 1;
+        for (int i = col - 1, j = row - 1; i >= 0 && j >= 0; i--, j--) {
+            if (!hasChess(i, j, isBlack ? Color.BLACK : Color.WHITE))
+                break;
+            if (++num == 5)
+                return true;
+        }
+        for (int i = col + 1, j = row + 1; i < COLS && j < ROWS; i++, j++) {
+            if (!hasChess(i, j, isBlack ? Color.BLACK : Color.WHITE))
+                break;
+            if (++num == 5)
+                return true;
+        }
+
+        num = 1;
+        for (int i = col - 1, j = row + 1; i >= 0 && j < ROWS; i--, j++) {
+            if (!hasChess(i, j, isBlack ? Color.BLACK : Color.WHITE))
+                break;
+            if (++num == 5)
+                return true;
+        }
+        for (int i = col + 1, j = row - 1; i < COLS && j >= 0; i++, j--) {
+            if (!hasChess(i, j, isBlack ? Color.BLACK : Color.WHITE))
+                break;
+            if (++num == 5)
+                return true;
+        }
+        return false;
+    }
+
     class MouseMonitor extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
+            if (!isGamming) {
+                return;
+            }
             int col = (e.getX() - MARGIN + GRID_SPAN / 2) / GRID_SPAN;
             int row = (e.getY() - MARGIN + GRID_SPAN / 2) / GRID_SPAN;
             if (hasChess(col, row)) {
                 return;
+            }
+            if (isWin(col, row)) {
+                isGamming = false;
             }
             Chess c = new Chess(ChessBoard.this, col, row, isBlack ? Color.BLACK : Color.WHITE);
             isBlack = !isBlack;

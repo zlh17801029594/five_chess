@@ -16,7 +16,7 @@ public class Five extends JFrame {
         exitButton = new JButton("退出");
         aggregateToolBar(toolBar, startButton, backButton, exitButton);
         boardPanel = new ChessBoard();
-        aggregateFive(toolBar, boardPanel);
+        aggregateFive(this, toolBar, boardPanel);
 
         this.setLocation(200, 200);
         this.pack();
@@ -26,10 +26,10 @@ public class Five extends JFrame {
         this.setVisible(true);
     }
 
-    private void aggregateFive(JToolBar toolBar, ChessBoard boardPanel) {
+    private void aggregateFive(JFrame frame, JToolBar toolBar, ChessBoard boardPanel) {
         // 组合工具栏、棋盘（在窗口中的）布局
-        this.add(toolBar, BorderLayout.NORTH);
-        this.add(boardPanel, BorderLayout.CENTER);
+        frame.add(toolBar, BorderLayout.NORTH);
+        frame.add(boardPanel, BorderLayout.CENTER);
     }
 
     private void aggregateToolBar(JToolBar toolBar, JButton startButton, JButton backButton, JButton exitButton) {

@@ -4,6 +4,8 @@ import com.zhoulihuang.ChessBoard;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.net.Socket;
 
 public class FiveClient extends JFrame {
     private ChessBoard boardPanel;
@@ -38,5 +40,10 @@ public class FiveClient extends JFrame {
 
     public static void main(String[] args) {
         new FiveClient();
+        try {
+            Socket s = new Socket("127.0.0.1", FiveServer.TCP_PORT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

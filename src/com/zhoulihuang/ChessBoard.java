@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.function.BiConsumer;
 
 import static com.zhoulihuang.Chess.DIAMETER;
 
@@ -18,10 +19,15 @@ public class ChessBoard extends JPanel {
     int chessCount;
     boolean isBlack = true;
     boolean isGamming = true;
+    private BiConsumer<Integer, Integer> goCallback;
 
     public ChessBoard() {
         this.addMouseListener(new MouseMonitor());
         this.addMouseMotionListener(new MouseMotionMonitor());
+    }
+
+    public void setGoCallback(BiConsumer<Integer, Integer> goCallback) {
+        this.goCallback = goCallback;
     }
 
     @Override
@@ -150,28 +156,33 @@ public class ChessBoard extends JPanel {
         repaint();
     }
 
+    public void go(int col, int row) {
+        if (!isGamming) {
+            return;
+        }
+        if (col < 0 || col > COLS || row < 0 || row > ROWS) {
+            return;
+        }
+        if (hasChess(col, row)) {
+            return;
+        }
+        Chess c = new Chess(col, row, isBlack ? Color.BLACK : Color.WHITE);
+        chessList[chessCount++] = c;
+        repaint();
+        if (isWin(col, row)) {
+            isGamming = false;
+            JOptionPane.showMessageDialog(ChessBoard.this, String.format("恭喜，%s赢了！", isBlack ? "黑棋" : "白棋"));
+        }
+        isBlack = !isBlack;
+    }
+
     class MouseMonitor extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
-            if (!isGamming) {
-                return;
-            }
             int col = (e.getX() - MARGIN + GRID_SPAN / 2) / GRID_SPAN;
             int row = (e.getY() - MARGIN + GRID_SPAN / 2) / GRID_SPAN;
-            if (col < 0 || col > COLS || row < 0 || row > ROWS) {
-                return;
-            }
-            if (hasChess(col, row)) {
-                return;
-            }
-            Chess c = new Chess(col, row, isBlack ? Color.BLACK : Color.WHITE);
-            chessList[chessCount++] = c;
-            repaint();
-            if (isWin(col, row)) {
-                isGamming = false;
-                JOptionPane.showMessageDialog(ChessBoard.this, String.format("恭喜，%s赢了！", isBlack ? "黑棋" : "白棋"));
-            }
-            isBlack = !isBlack;
+            go(col, row);
+            goCallback.accept(col, row);
         }
     }
 

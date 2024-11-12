@@ -4,6 +4,8 @@ import com.zhoulihuang.ChessBoard;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -38,12 +40,42 @@ public class FiveClient extends JFrame {
         this.setVisible(true);
     }
 
-    public static void main(String[] args) {
-        new FiveClient();
+    private void connect() {
         try {
             Socket s = new Socket("127.0.0.1", FiveServer.TCP_PORT);
+            message.messageArea.append("已连接\n");
+            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+            boardPanel.setGoCallback((x, y) -> {
+                try {
+                    dos.writeUTF(Command.GO + ":" + x + ":" + y);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            DataInputStream dis = new DataInputStream(s.getInputStream());
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        String msg = dis.readUTF();
+                        String[] words = msg.split(":");
+                        if (words[0].equals(Command.ADD)) {
+                            userList.userList.add(words[1]);
+                            message.messageArea.append(words[1] + "\n");
+                        } else if (words[0].equals(Command.GO)) {
+                            boardPanel.go(Integer.parseInt(words[1]), Integer.parseInt(words[2]));
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        FiveClient fc = new FiveClient();
+        fc.connect();
     }
 }
